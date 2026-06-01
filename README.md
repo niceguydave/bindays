@@ -3,9 +3,8 @@
 Tells you which bins go out and when.  I'm using Glasgow City Council as the test 
 case, but I imagine this could be used for any other council in future.
 
-This is **Iteration 0**: prove we can reliably fetch and parse the council's
-collection calendar and print upcoming collections. Later iterations add natural
-language queries, a web/API service, and Home Assistant voice support.
+This is the first commit which should prove that we can reliably fetch and parse the council's
+collection calendar and print upcoming collections.
 
 ### Data source & acknowledgement
 
@@ -18,8 +17,7 @@ underlying data goes to GCC.
 
 ### Supported councils (and adding more)
 
-Right now this tool supports **Glasgow City Council only**. That limitation is
-made explicit in the code rather than left implicit:
+Right now this tool supports **Glasgow City Council only**.
 
 - `bindays/council.py` defines the `Council` interface (no council specifics).
 - `bindays/councils/` holds the concrete providers and the registry
@@ -125,21 +123,7 @@ Property lookup order: `--uprn` > `BINDAYS_UPRN` env var > saved `config.json`.
 
 ## Keeping dependencies up to date
 
-We manage dependencies with [pip-tools](https://github.com/jazzband/pip-tools),
-following the approach in *Boost Your Django DX* by Adam Johnson. There are **two
-files**, and it's important to understand the split:
-
-| File | Who edits it | What's in it |
-|------|--------------|--------------|
-| `requirements.in`  | **You, by hand** | Only the *direct* packages we use (`requests`, `beautifulsoup4`). |
-| `requirements.txt` | **Generated** by `pip-compile` | *Every* package, including transitive ones, pinned to an exact version. |
-
-Why bother? Pinning every version (including the transitive dependencies you
-never named, like `urllib3` or `certifi`) makes installs **repeatable**: everyone,
-and every machine, gets the identical set of versions. Editing `requirements.txt`
-by hand can't do that, because it won't re-resolve the hidden transitive
-dependencies — a silent upgrade of one of those is a classic source of
-"works on my machine" bugs.
+We manage dependencies with [pip-tools](https://github.com/jazzband/pip-tools).
 
 Install pip-tools once (it's a development tool, so it is *not* listed in
 `requirements.txt`):
@@ -149,9 +133,8 @@ pip install pip-tools
 ```
 
 > We keep a **single** requirements file for both runtime and test tooling
-> (`pytest`, `requests-mock`), as recommended in *Boost Your Django DX*. So
-> `pip install -r requirements.txt` gives you everything you need to run *and*
-> test the project.
+> (`pytest`, `requests-mock`). So `pip install -r requirements.txt` gives
+> you everything you need to run *and* test the project.
 
 ### Add or remove a dependency
 
@@ -180,14 +163,6 @@ Tip: to match your virtualenv *exactly* to the lock file (installing, upgrading
 pip-sync requirements.txt
 ```
 
-### Upgrade on a schedule
-
-Pinned versions only stay healthy if you refresh them. The book's advice
-(adapted for a small project): run `pip-compile -U` on a **regular cadence**
-(say monthly), review the diff, install, and check the app still works. Handle
-big components (Python itself, or a future web framework) as separate, deliberate
-upgrades rather than lumping them in.
-
 ## Running the tests
 
 The test tooling is included in the single `requirements.txt`, so if you've done
@@ -197,22 +172,6 @@ the Quick start there's nothing extra to install:
 pip install -r requirements.txt   # if not already installed
 pytest
 ```
-
-The suite follows the approach in *Speed Up Your Django Tests* by Adam Johnson,
-adapted for this (non-Django) project:
-
-- **Mostly fast unit tests.** The parsing, caching, reporting and pagination
-  logic are tested in isolation — the whole suite runs in well under a second.
-- **No real network — "aeroplane mode".** Every test is wrapped in a
-  [requests-mock](https://requests-mock.readthedocs.io/) `Mocker` (see
-  `conftest.py`), so any accidental real HTTP request fails loudly instead of
-  hitting the council's servers. HTTP tests register the exact responses they
-  expect, including the multi-step address-search pagination.
-- **Deterministic time.** Functions take an injectable `today` / `now`, so tests
-  pin the date instead of depending on the real clock (e.g. the
-  December→January year-rollover test).
-- **Factory functions over fixture files** (`tests/helpers.py`) build the small
-  bits of data — including council-shaped calendar HTML — close to each test.
 
 ## Type checking & pre-commit
 
