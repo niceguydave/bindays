@@ -1,12 +1,6 @@
 # Continuous Integration: the backstop that runs the SAME checks as local
 # pre-commit, plus the test suite, on every push and pull request.
-#
-# Why both local pre-commit AND CI? Local hooks give fast feedback but can be
-# skipped (`git commit -n`) or simply not installed by a contributor. CI cannot
-# be bypassed, so it's the source of truth. (This is the advice in
-# "Boost Your Django DX": run hooks on developer machines *and* in CI.)
-#
-# NOTE: assumes this `bindays/` project folder is the git repository root.
+
 name: CI
 
 on:
