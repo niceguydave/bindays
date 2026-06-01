@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/" # requirements.in / requirements.txt live at the repo root
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "pip"
+    # One grouped PR per run instead of a flurry of single-package PRs - far less
+    # noise for a small project, and you review related bumps together.
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/" # Dependabot looks in .github/workflows from the root
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
