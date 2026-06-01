@@ -1,0 +1,26 @@
+[project]
+name = "bindays"
+version = "0.1.0"
+description = "Tells you which bins go out and when (currently Glasgow City Council)."
+# Single source of truth for the supported Python version. pip enforces this.
+# Floor is 3.11 (the code's true minimum is 3.10, for `X | None` annotations).
+requires-python = ">=3.11"
+
+[tool.mypy]
+python_version = "3.11"
+# Type-check the application code (tests use looser typing for brevity).
+files = ["bindays", "bin_check.py"]
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unreachable = true
+disallow_untyped_defs = true
+
+[tool.typos.default.extend-words]
+# Real package name, not a misspelling of "certify".
+certifi = "certifi"
+
+[tool.pytest.ini_options]
+# Run the project's own modules without installing the package.
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-ra"

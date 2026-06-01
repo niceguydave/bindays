@@ -1,0 +1,74 @@
+# pre-commit configuration.
+#
+# Run locally on every commit after `pre-commit install`, and run the SAME hooks
+# in CI as a backstop (local hooks can be bypassed with `git commit -n`). See the
+# README "Type checking & pre-commit" section.
+#
+# NOTE: pre-commit looks for this file at the git repository root. It is written
+# assuming this `bindays/` project folder is that root. If the project lives
+# inside a larger repo, move this file to the repo root and adjust `files:`.
+#
+# Pin hook versions with: `pre-commit autoupdate`.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: detect-private-key
+
+  # Lint + format Python (replaces the need for separate flake8/black/isort).
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.15
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  # Static type checking.
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v2.1.0
+    hooks:
+      - id: mypy
+        # Only type-check the application code (matches [tool.mypy] in pyproject).
+        files: ^(bindays/|bin_check\.py$)
+        # mypy runs in pre-commit's isolated env, so it needs the type stubs here.
+        additional_dependencies:
+          - types-requests
+          - types-beautifulsoup4
+
+  # Lint the GitHub Actions workflow(s).
+  - repo: https://github.com/Mateusz-Grzelinski/actionlint-py
+    rev: v1.7.12.24
+    hooks:
+      - id: actionlint
+
+  # Catch typos in code, comments and docs.
+  - repo: https://github.com/adhtruong/mirrors-typos
+    rev: v1.47.0
+    hooks:
+      - id: typos
+
+  # Guard against accidentally committed debug helpers.
+  - repo: local
+    hooks:
+      - id: no-icecream
+        name: no calls to icecream
+        description: Check for leftover icecream debug calls
+        entry: (\s|\.)ic\(
+        language: pygrep
+        types: [python]
+      - id: no-pysnooper
+        name: no calls to pysnooper
+        description: Check for leftover pysnooper debug calls
+        entry: (\s|\.)snoop\(
+        language: pygrep
+        types: [python]

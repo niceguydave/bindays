@@ -1,0 +1,23 @@
+# Personal data generated at runtime — never commit these.
+# They contain your property's UPRN/address and collection schedule.
+config.json
+cache.json
+
+# Virtual environment
+.venv/
+
+# IDE / editor settings
+.idea/
+.vscode/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# pytest / mypy / ruff caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# pip-compile backup, if you ever make one
+requirements.txt.orig
