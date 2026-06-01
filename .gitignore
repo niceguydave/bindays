@@ -1,4 +1,4 @@
-# Personal data generated at runtime — never commit these.
+# Personal data generated at runtime: never commit these.
 # They contain your property's UPRN/address and collection schedule.
 config.json
 cache.json
