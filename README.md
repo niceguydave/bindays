@@ -1,4 +1,4 @@
-# Bindays
+# BinDays
 
 Tells you which bins go out and when.  I'm using Glasgow City Council as the test
 case, but I imagine this could be used for any other council in future.
